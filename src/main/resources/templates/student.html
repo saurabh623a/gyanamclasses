@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Details</title>
+</head>
+<body>
+<h1>Student Details</h1>
+<p>Name: <span th:text="${student.name}"></span></p>
+<p>Contact: <span th:text="${student.contact}"></span></p>
+<p>Course: <span th:text="${student.course}"></span></p>
+<p>Fees:
+<ul>
+    <li th:each="fee : ${student.feeRecords}">
+        <span th:text="${fee.month}"></span>:
+        Paid: <span th:text="${fee.feesPaid}"></span>,
+        Outstanding: <span th:text="${fee.outstandingFees}"></span>
+    </li>
+</ul>
+</p>
+</body>
+</html>

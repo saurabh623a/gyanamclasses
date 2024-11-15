@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Course</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Add New Course</h1>
+
+    <!-- Course Form -->
+    <form action="#" th:action="@{/courses/add}" th:object="${course}" method="post">
+        <div class="form-group">
+            <label for="name">Course Name</label>
+            <input type="text" id ="name" class="form-control" th:field="*{name}" placeholder="Enter course name" required />
+        </div>
+
+        <div class="form-group">
+            <label for="registrationFee">Registration Fee</label>
+            <input type="number" id ="registrationFee" class="form-control" th:field="*{registrationFee}" step="0.01" placeholder="Enter registration fee" required />
+        </div>
+
+        <div class="form-group">
+            <label for="courseFee">Course Fee</label>
+            <input type="number" id ="courseFee" class="form-control" th:field="*{courseFee}" step="0.01" placeholder="Enter course fee" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Add Course</button>
+    </form>
+
+    <div class="text-center mt-4">
+        <a href="/courses/list" class="btn btn-secondary">View Courses</a>
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
