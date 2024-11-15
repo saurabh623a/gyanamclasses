@@ -52,4 +52,7 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public void updateStudent(Student student) {
+        studentRepository.save(student);
+    }
 }

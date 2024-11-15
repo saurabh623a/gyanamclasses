@@ -24,6 +24,7 @@ public class Student {
     @DBRef
     private Course course;
     private List<FeeRecord> feeRecords = new ArrayList<>();
+    private List<Payment> payments = new ArrayList<>();
 
 
 }

@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Students List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Students</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Students List</h2>
-    <div class="text-right mb-3">
-        <a href="/students/add" class="btn btn-primary">Add New Student</a>
+    <h2 class="text-center mb-4">Student Management</h2>
+
+    <!-- Add Student and Course Buttons -->
+    <div class="d-flex justify-content-between mb-3">
+        <a href="/students/add" class="btn btn-primary">+ Add Student</a>
+        <a href="/courses/add" class="btn btn-secondary">+ Add Course</a>
     </div>
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-        <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Course</th>
-            <th>Registration Fee</th>
-            <th>Registration Date</th>
-            <th>Total Course Fee</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="student, iterStat : ${students}">
-            <td th:text="${iterStat.count}"></td>
-            <td th:text="${student.name}"></td>
-            <td th:text="${student.course.name}"></td>
-            <td th:text="${student.registrationFee}"></td>
-            <td th:text="${student.registrationDate}"></td>
-            <td th:text="${student.totalOutstandingFees}"></td>
-            <td>
-                <a th:href="@{/students/payFees/{id}(id=${student.id})}" th:method="delete" class="btn btn-success btn-sm">Pay Fees</a>
-                <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{/students/delete/{id}(id=${student.id})}" class="btn btn-danger btn-sm"
-                   onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+
+    <!-- Student Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Registration Fee</th>
+                <th>Registration Date</th>
+                <th>Total Outstanding Fees</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student, iterStat : ${students}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${student.name}"></td>
+                <td th:text="${student.course.name}"></td>
+                <td th:text="${student.registrationFee}"></td>
+                <td th:text="${student.registrationDate}"></td>
+                <td th:text="${student.totalOutstandingFees}"></td>
+                <td>
+                    <a th:href="@{/students/payFees?studentId={id}(id=${student.id})}" class="btn btn-success btn-sm">Pay Fees</a>
+                    <a th:href="@{/students/generateReceipt/{id}(id=${student.id})}" class="btn btn-info btn-sm">Download Receipt</a>
+                    <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-warning btn-sm">Edit</a>
+                    <a th:href="@{/students/delete/{id}(id=${student.id})}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap JS and Dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

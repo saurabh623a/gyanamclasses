@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payment Receipt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">Payment Receipt</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Receipt Details</h5>
+            <p><strong>Student Name:</strong> <span th:text="${student.name}"></span></p>
+            <p><strong>Course:</strong> <span th:text="${student.course.name}"></span></p>
+            <p><strong>Payment Date:</strong> <span th:text="${payment.paymentDate}"></span></p>
+            <p><strong>Amount Paid:</strong> <span th:text="${payment.amountPaid}"></span></p>
+            <p><strong>Total Outstanding Fees:</strong> <span th:text="${student.totalOutstandingFees}"></span></p>
+        </div>
+    </div>
+    <a href="/students" class="btn btn-secondary mt-3">Back to Students</a>
+</div>
+</body>
+</html>
