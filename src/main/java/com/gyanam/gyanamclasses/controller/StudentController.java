@@ -1,8 +1,6 @@
 package com.gyanam.gyanamclasses.controller;
 
 import com.gyanam.gyanamclasses.model.Course;
-import com.gyanam.gyanamclasses.model.Payment;
-import com.gyanam.gyanamclasses.model.PaymentReceipt;
 import com.gyanam.gyanamclasses.model.Student;
 import com.gyanam.gyanamclasses.repository.StudentRepository;
 import com.gyanam.gyanamclasses.service.CourseService;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -141,5 +138,45 @@ public class StudentController {
         document.add(new Paragraph("Course: " + student.getCourse().getName()));
         document.add(new Paragraph("Total Outstanding Fees: " + student.getTotalOutstandingFees()));
         document.close();
+    }
+    @GetMapping("/outstanding")
+    public String viewStudentsWithOutstandingFees(Model model) {
+        List<Student> studentsWithOutstandingFees = studentRepository.findByTotalOutstandingFeesGreaterThan(0.0);
+        model.addAttribute("students", studentsWithOutstandingFees);
+        return "studentsWithOutstandingFees";
+    }
+    @GetMapping("/edit/{id}")
+    public String editStudentForm(@PathVariable String id, Model model) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isPresent()) {
+            Student student = studentOptional.get();
+            List<Course> courses = courseService.findAllCourses(); // Fetch all courses for dropdown
+            model.addAttribute("student", student);
+            model.addAttribute("courses", courses);
+            return "editStudent";
+        } else {
+            model.addAttribute("errorMessage", "Student not found.");
+            return "redirect:/students";
+        }
+    }
+    @PostMapping("/edit/{id}")
+    public String updateStudent(@PathVariable String id, @ModelAttribute("student") Student updatedStudent, Model model) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isPresent()) {
+            Student student = studentOptional.get();
+
+            // Update fields
+            student.setName(updatedStudent.getName());
+            student.setCourse(updatedStudent.getCourse());
+            student.setRegistrationDate(updatedStudent.getRegistrationDate());
+            student.setRegistrationFee(updatedStudent.getRegistrationFee());
+            student.setTotalOutstandingFees(updatedStudent.getTotalOutstandingFees());
+
+            studentRepository.save(student); // Save updated student
+            return "redirect:/students";
+        } else {
+            model.addAttribute("errorMessage", "Student not found.");
+            return "redirect:/students";
+        }
     }
 }
