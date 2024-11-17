@@ -1,6 +1,6 @@
 package com.gyanam.gyanamclasses.model;
 
-import lombok.*;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,10 +21,9 @@ public class Student {
     private double totalOutstandingFees;
     private LocalDate registrationDate;
     private Double registrationFee;
+    private String photoUrl; // Field to store the image as binary data
     @DBRef
     private Course course;
     private List<FeeRecord> feeRecords = new ArrayList<>();
     private List<Payment> payments = new ArrayList<>();
-
-
 }

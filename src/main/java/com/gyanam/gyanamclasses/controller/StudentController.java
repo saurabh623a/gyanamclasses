@@ -14,7 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +35,7 @@ public class StudentController {
     @Autowired
     private CourseService courseService;
 
-
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/images";
 
     @GetMapping
     public String listStudents(Model model) {
@@ -38,39 +43,50 @@ public class StudentController {
         double totalPendingFees = studentService.getTotalPendingFees();
         model.addAttribute("students", students);
         model.addAttribute("totalPendingFees", totalPendingFees);
-        return "students";  // Name of the Thymeleaf template
+        return "students";
     }
 
     @GetMapping("/add")
     public String showAddStudentForm(Model model) {
-        Student student = new Student();
-
-        model.addAttribute("student", new Student());// Passing an empty student object for the form
+        model.addAttribute("student", new Student());
         List<Course> courses = courseService.findAllCourses();
-        model.addAttribute("courses", courses);  // Passing an empty student object for the form
+        model.addAttribute("courses", courses);
         return "add-student";
     }
 
     @PostMapping("/add")
-    public String addStudent(@ModelAttribute Student student) {
-//        Optional<Course> course= courseService.findCourseById(courseId);
-//        Course selectedCourse = null;
-//        if (course.isPresent()) {
-//             selectedCourse = course.get();
-//        }
-//        FeeRecord registrationFeeRecord = new FeeRecord();
-//        assert selectedCourse != null;
-//        registrationFeeRecord.setOutstandingFees(selectedCourse.getRegistrationFee());
-//        registrationFeeRecord.setMonth();
-//        Course selectedCourse = student.getCourse();
-//        student.setRegistrationFee(selectedCourse.getRegistrationFee());
-//        student.setTotalOutstandingFees(selectedCourse.getRegistrationFee() + selectedCourse.getCourseFee());
+    public String addStudent(@ModelAttribute Student student,
+                             @RequestParam("photo") MultipartFile photo, Model model) {
+
+        if (!photo.isEmpty()) {
+            try {
+                // Create directories if they don't exist
+                Path uploadPath = Paths.get(UPLOAD_DIR);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // Save the file
+                String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(photo.getInputStream(), filePath);
+
+                // Set the file URL in the student object (store as a string)
+                student.setPhotoUrl("/" + UPLOAD_DIR + fileName);
+            } catch (IOException e) {
+                model.addAttribute("errorMessage", "File upload failed.");
+                return "add-student";
+            }
+        }
+
         studentService.addStudent(student);
-        return "redirect:/students";  // Redirect to student list page after adding
+        return "redirect:/students";
     }
 
+
+
     @GetMapping("/delete/{id}")
-    public String deleteStudent(@PathVariable String id){
+    public String deleteStudent(@PathVariable String id) {
         studentService.deleteStudent(id);
         return "redirect:/students";
     }
@@ -142,7 +158,12 @@ public class StudentController {
     @GetMapping("/outstanding")
     public String viewStudentsWithOutstandingFees(Model model) {
         List<Student> studentsWithOutstandingFees = studentRepository.findByTotalOutstandingFeesGreaterThan(0.0);
+        double totalOutstandingAmount = studentsWithOutstandingFees.stream()
+                .mapToDouble(Student::getTotalOutstandingFees)
+                .sum();  // Sum of all outstanding fees
+
         model.addAttribute("students", studentsWithOutstandingFees);
+        model.addAttribute("totalOutstandingAmount", totalOutstandingAmount);  // Add the total amount to the model
         return "studentsWithOutstandingFees";
     }
     @GetMapping("/edit/{id}")
